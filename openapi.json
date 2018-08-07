@@ -1,4 +1,13 @@
 {
   "openapi": "3.0.0",
-  
+  "info": {
+    "title": "oplog.se API",
+    "description": "This is the API for oplog.se",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://oplog.se/api/v1"
+    }
+  ]
 }
