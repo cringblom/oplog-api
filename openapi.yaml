@@ -1,0 +1,41 @@
+---
+openapi: 3.0.0
+info:
+  title: oplog.se API
+  description: This is the API for oplog.se
+  version: 1.0.0
+servers:
+- url: https://oplog.se/api/v1
+paths:
+  "/login":
+    post:
+      summary: Login
+      description: This is to authenticate the user. If successful it returns a cookie
+        to be used in subsequent requests
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - username, password
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: If authentication is successful. Returns a cookie with an empty
+            response body
+        '401':
+          description: If authentication fails
+  "/logout":
+    post:
+      summary: Logout
+      description: This is to logout the user and clear the session
+      operationId: logout
+      responses:
+        '200':
+          description: If logout is successful. Returns empty response body
