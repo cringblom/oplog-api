@@ -9,5 +9,29 @@
     {
       "url": "https://oplog.se/api/v1"
     }
-  ]
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "summary": "Login",
+        "description": "This is to authenticate the user. If successful it return a cookie to be used in subsquent requests",
+        "requestBody": {
+          "content": {
+            "schema": {
+              "required": ["username, password"],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        }
+      }
+    }
+  }
 }
