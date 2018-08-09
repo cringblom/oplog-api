@@ -35,7 +35,7 @@ paths:
   /logout:
     post:
       summary: Logout
-      description: This is to logout the user and clear the session!!
+      description: This is to logout the user and clear the session. Empty request body
       operationId: logout
       responses:
         '200':
@@ -70,6 +70,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OPERATION'
+  /operations/{operationId}:
+    delete:
+      summary: Delete operation
+      description: Delete a single operation
+      operationId: deleteOperation
+      parameters:
+        - name: operationId
+          in: path
+          description: The ID of the operation to be deleted
+      responses:
+        '200':
+          description: Returns an empty response if sucessful
 components:
   schemas:
     NEW_OPERATION:
