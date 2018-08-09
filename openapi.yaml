@@ -18,7 +18,8 @@ paths:
             schema:
               type: object
               required:
-                - username, password
+                - username
+                - password
               properties:
                 username:
                   type: string
@@ -52,13 +53,57 @@ paths:
               schema:
                 type: array
                 items:
-                  type: object
-                  properties:
-                    _id:
-                      type: string
-                    icd:
-                      type: string
-                    date:
-                      type: string
-                    mainOperator:
-                      type: boolean
+                  $ref: '#/components/schemas/OPERATION'
+    post:
+      summary: Add operation
+      description: Add an operation
+      operationId: addOperation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NEW_OPERATION'
+      responses:
+        '200':
+          description: 'Returns the operation with an id'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OPERATION'
+components:
+  schemas:
+    NEW_OPERATION:
+      type: object
+      required:
+        - icd
+        - date
+        - mainOperator
+      properties:
+        icd:
+          type: string
+          description: One of Socialstyrelsens KVÅ-koder from 2017.
+        date:
+          type: string
+          format: date
+          description: Only accepts format 'YYYY-MM-DD'. The time part is added on the server with the current UTC time.
+        mainOperator:
+          type: boolean
+          description: Operator = true. Assistant = false.
+    OPERATION:
+      allOf:
+        - required:
+          - _id
+          properties:
+            _id:
+              type: string
+              description: Unique ID for the operation.
+            date:
+              type: string
+              format: date-time
+              description: 'Date in UTC timezone and formated according ISO 8601. Example: "2018-08-06T09:54:29.697Z"'
+        - $ref: '#/components/schemas/NEW_OPERATION'
+      example:
+        _id: 5b681ad52de2491060977ed3
+        icd: JAB30
+        date: 2018-08-06T09:54:29.697Z,
+        mainOperator: true
