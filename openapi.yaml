@@ -70,6 +70,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OPERATION'
+        '400':
+          description: Bad request. Returns an object describing the error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ADD_OPERATION_ERROR'
   /operations/{operationId}:
     delete:
       summary: Delete operation
@@ -78,10 +84,17 @@ paths:
       parameters:
         - name: operationId
           in: path
+          required: true
           description: The ID of the operation to be deleted
       responses:
         '200':
           description: Returns an empty response if sucessful
+        '400':
+          description: Bad request. Returns an object describing the error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DELETE_OPERATION_ERROR'
 components:
   schemas:
     NEW_OPERATION:
@@ -119,3 +132,36 @@ components:
         icd: JAB30
         date: 2018-08-06T09:54:29.697Z,
         mainOperator: true
+    ERROR:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP status code.
+        errorCode:
+          type: string
+          description: A string unique for the error type.
+        message:
+          type: string
+          description: A message describing the error. This message is intended for dubugging and not end users.
+    ADD_OPERATION_ERROR:
+      allOf:
+        - $ref: '#/components/schemas/ERROR'
+        - properties:
+            errorCode:
+              type: string
+              description: A unique string for the error type.
+              enum:
+                - InvalidJsonSyntax
+                - InvalidOperationDate
+                - InvalidOperationProperty
+    DELETE_OPERATION_ERROR:
+      allOf:
+        - $ref: '#/components/schemas/ERROR'
+        - properties:
+            errorCode:
+              type: string
+              description: A unique string for the error type.
+              enum:
+                - InvalidJsonSyntax
+                - InvalidOperationId
