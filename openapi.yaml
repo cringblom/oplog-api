@@ -42,6 +42,80 @@ paths:
       responses:
         '200':
           description: If logout is successful. Returns empty response body
+  /register:
+    post:
+      summary: Register user
+      description: Register new user. The user submits their email address and an email wiil be sent to that address with a verification link.
+      operationId: registerUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Verification email has been sent. Empty response.
+        '400':
+          description: Error registering user. Returns error object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/REGISTER_USER_ERROR'
+  /verify-account/{token}:
+    summary: Verify account
+    description: Used for registerng a new account and for resetting password.
+    get:
+      summary: Verify account
+      description: Fetches user associated with the token.
+      operationId: getVerifyAccount
+      parameters:
+        - name: token
+          in: path
+          required: true
+          description: Token recieved in the email link when registering an account.
+      responses:
+        '200':
+          description: Returns object with username and if the user is new.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  isNewUser:
+                    type: boolean
+        '400':
+          description: Bad request. Returns error object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GET_VERIFY_ACCOUNT_ERROR'
+    post:
+      summary: Set password
+      description: Request to verify account and set password.
+      operationId: postVerifyAccount
+      parameters:
+        - name: token
+          in: path
+          required: true
+          description: Token recieved in the email link when registering an account.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+              properties:
+                password:
+                  type: string
+                  minLength: 6
+                  maxLength: 20
   /operations:
     get:
       summary: Get operations
@@ -245,3 +319,24 @@ components:
               enum:
                 - InvalidJsonSyntax
                 - EmailRequired
+    REGISTER_USER_ERROR:
+      allOf:
+        - $ref: '#/components/schemas/ERROR'
+        - properties:
+            errorCode:
+              type: string
+              description: A unique string for the error type.
+              enum:
+                - InvalidJsonSyntax
+                - EmailSyntaxInvalid
+                - EmailAlreadyInUse
+                - EmailRequired
+    GET_VERIFY_ACCOUNT_ERROR:
+      allOf:
+        - $ref: '#/components/schemas/ERROR'
+        - properties:
+            errorCode:
+              type: string
+              description: A unique string for the error type.
+              enum:
+                - InvalidRegistrationToken
