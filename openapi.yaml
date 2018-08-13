@@ -96,8 +96,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/GET_VERIFY_ACCOUNT_ERROR'
     post:
-      summary: Set password
-      description: Request to verify account and set password.
+      summary: Verify Account
+      description: Verify and create account or reset password if account already exists.
       operationId: postVerifyAccount
       parameters:
         - name: token
@@ -116,6 +116,15 @@ paths:
                   type: string
                   minLength: 6
                   maxLength: 20
+      responses:
+        '200':
+          description: Account created successfully. User will also be logged in. Returns empty response with session cookie.
+        '400':
+          description: Bad request. Returns error object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/POST_VERIFY_ACCOUNT_ERROR'
   /operations:
     get:
       summary: Get operations
@@ -340,3 +349,13 @@ components:
               description: A unique string for the error type.
               enum:
                 - InvalidRegistrationToken
+    POST_VERIFY_ACCOUNT_ERROR:
+      allOf:
+        - $ref: '#/components/schemas/ERROR'
+        - properties:
+            errorCode:
+              type: string
+              description: A unique string for the error type.
+              enum:
+                - InvalidRegistrationToken
+                - InvalidPasswordSyntax
