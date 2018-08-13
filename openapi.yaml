@@ -9,7 +9,8 @@ paths:
   /login:
     post:
       summary: Login
-      description: This is to authenticate the user. If successful it returns a cookie
+      description: |
+        This is to authenticate the user. If successful it returns a cookie
         to be used in subsequent requests
       operationId: login
       requestBody:
@@ -45,7 +46,10 @@ paths:
   /register:
     post:
       summary: Register user
-      description: Register new user. The user submits their email address and an email wiil be sent to that address with a verification link.
+      description: |
+        The account will not be created, instead an email
+        will be sent to address included in the request with a verification
+        link containing a token.
       operationId: registerUser
       requestBody:
         content:
@@ -58,9 +62,9 @@ paths:
                   format: email
       responses:
         '200':
-          description: Verification email has been sent. Empty response.
+          description: Verification email will be sent. Empty response.
         '400':
-          description: Error registering user. Returns error object.
+          description: Bad request. Returns error object.
           content:
             application/json:
               schema:
