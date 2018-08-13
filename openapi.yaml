@@ -37,6 +37,8 @@ paths:
       summary: Logout
       description: This is to logout the user and clear the session. Empty request body
       operationId: logout
+      security:
+        - cookieAuthentication: []
       responses:
         '200':
           description: If logout is successful. Returns empty response body
@@ -45,6 +47,8 @@ paths:
       summary: Get operations
       description: Fetches all operations. Returns an array of unsorted operations.
       operationId: getOperations
+      security:
+        - cookieAuthentication: []
       responses:
         '200':
           description: Return an array of operations. Unsorted
@@ -58,6 +62,8 @@ paths:
       summary: Add operation
       description: Add an operation
       operationId: addOperation
+      security:
+        - cookieAuthentication: []
       requestBody:
         content:
           application/json:
@@ -81,6 +87,8 @@ paths:
       summary: Delete operation
       description: Delete a single operation
       operationId: deleteOperation
+      security:
+        - cookieAuthentication: []
       parameters:
         - name: operationId
           in: path
@@ -95,7 +103,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DELETE_OPERATION_ERROR'
+  /user:
+    get:
+      summary: Get user
+      description: Fetches the authenticated user. Returns an object with the username
+      operationId: getUser
+      security:
+        - cookieAuthentication: []
+      responses:
+        '200':
+          description: Returns an object with the username.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+    delete:
+      summary: Delete user
+      description: Deletes the user account and all relating data including operations for that user. The username is required in the request to prevent accidental removing of accounts.
+      operationId: deleteUser
+      security:
+        - cookieAuthentication: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: The username of the authenticated user.
+      responses:
+        '200':
+          description: Empty response if successful
+        '400':
+          description: Bad request. Returns an object describing the error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DELETE_USER_ERROR'
+  /authenticated-state:
+    get:
+      summary: Authenticated state
+      description: Fetches the authentication state for the user.
+      operationId: getAuthenticatedState
+      security:
+        - cookieAuthentication: []
+      responses:
+        '200':
+          description: If user is authenticated. Empty response.
+        '401':
+          description: If user is unauthenticated. Returns error object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ERROR'
 components:
+  securitySchemes:
+    cookieAuthentication:
+      type: apiKey
+      in: cookie
+      name: oplog.sid
   schemas:
     NEW_OPERATION:
       type: object
@@ -165,3 +235,13 @@ components:
               enum:
                 - InvalidJsonSyntax
                 - InvalidOperationId
+    DELETE_USER_ERROR:
+      allOf:
+        - $ref: '#/components/schemas/ERROR'
+        - properties:
+            errorCode:
+              type: string
+              description: A unique string for the error type.
+              enum:
+                - InvalidJsonSyntax
+                - EmailRequired
